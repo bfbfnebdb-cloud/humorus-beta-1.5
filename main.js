@@ -120,7 +120,7 @@ function getFullText(templateKey, lang) {
 }
 
 // ============================================================
-// АНИМАЦИЯ ПЕЧАТИ ТЕКСТА (исправленная)
+// АНИМАЦИЯ ПЕЧАТИ ТЕКСТА
 // ============================================================
 
 function startTypingAnimation(text) {
@@ -130,7 +130,7 @@ function startTypingAnimation(text) {
     // Сброс
     hElement.textContent = '';
     hElement.style.width = '0';
-    hElement.style.display = 'block';
+    hElement.style.display = 'inline-block';
     hElement.classList.remove('typing', 'typing-done');
     
     // Сохраняем текст
@@ -142,15 +142,32 @@ function startTypingAnimation(text) {
         hElement.classList.add('typing');
     }, 300);
     
-    // Вычисляем длительность анимации в зависимости от длины текста
-    // (но не более 4 секунд, чтобы не слишком долго)
-    const duration = Math.min(text.length * 80, 4000);
+    const duration = Math.min(text.length * 100, 4000);
     setTimeout(() => {
         hElement.classList.remove('typing');
         hElement.classList.add('typing-done');
         hElement.style.width = '100%';
-        // border-right убирается через CSS класс .typing-done
     }, duration + 500);
+}
+
+// Функция для обновления видимости элементов в зависимости от состояния
+function updateVisibility() {
+    const form1 = document.getElementById('form1');
+    const form2 = document.getElementById('form2');
+    const santaText = document.getElementById('SantaText');
+    const philosopherText = document.getElementById('philosopherText');
+    const hElement = document.getElementById('h');
+    
+    // Если активна форма1 или форма2 или текст, скрываем h
+    if (form1.style.display === 'block' || 
+        form2.style.display === 'block' || 
+        santaText.style.display === 'block' || 
+        philosopherText.style.display === 'block') {
+        hElement.style.display = 'none';
+    } else {
+        // Иначе показываем h
+        hElement.style.display = 'inline-block';
+    }
 }
 
 // Переключение на английский
@@ -190,20 +207,25 @@ function updateAllTexts() {
             const newText = langConfig[currentLang][key];
             const currentText = hElement.getAttribute('data-full-text');
             
-            if (currentText !== newText) {
+            // Проверяем, виден ли h
+            const isVisible = hElement.style.display !== 'none';
+            
+            if (currentText !== newText && isVisible) {
                 startTypingAnimation(newText);
-            } else {
+            } else if (isVisible) {
                 // Если текст тот же, просто показываем без анимации
                 hElement.textContent = newText;
                 hElement.classList.add('typing-done');
                 hElement.style.width = '100%';
-                // border-right убирается через CSS
             }
         }
     }
     
     updateSantaText();
     updatePhilosopherText();
+    
+    // Обновляем видимость
+    updateVisibility();
 }
 
 function updateSantaText() {
@@ -288,6 +310,9 @@ async function submit(){
     const santaTextEl = document.getElementById('SantaText');
     santaTextEl.style.display = 'block';
     santaTextEl.querySelector('p').innerHTML = finalText;
+    
+    // Скрываем h
+    document.getElementById('h').style.display = 'none';
 }
 
 function philosopher(){
@@ -342,6 +367,9 @@ async function submitsec(){
     const philosopherTextEl = document.getElementById('philosopherText');
     philosopherTextEl.style.display = 'block';
     philosopherTextEl.querySelector('p').innerHTML = finalText;
+    
+    // Скрываем h
+    document.getElementById('h').style.display = 'none';
 }
 
 const langConfig = {
@@ -454,6 +482,8 @@ document.addEventListener("DOMContentLoaded", () =>{
     const hElement = document.getElementById('h');
     if (hElement) {
         const text = langConfig['ru']['textHelper'];
+        // Убеждаемся, что h виден
+        hElement.style.display = 'inline-block';
         startTypingAnimation(text);
     }
 });
