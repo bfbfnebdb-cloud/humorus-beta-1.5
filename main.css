@@ -523,7 +523,7 @@ input[type="button"]:active {
 
     /* Заголовок с анимацией печати */
     #h {
-        font-size: 1.6em !important;
+        font-size: 1.3em !important;
         white-space: nowrap;
         border-right: 2px solid #4a6cf7;
         margin: 60px 0 0 0 !important;
